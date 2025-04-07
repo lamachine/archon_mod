@@ -8,7 +8,7 @@ from utils.utils import get_env_var
 @st.cache_data
 def load_sql_template():
     """Load the SQL template file and cache it"""
-    with open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "utils", "site_pages.sql"), "r") as f:
+    with open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "utils", "docs_site_pages.sql"), "r") as f:
         return f.read()
 
 def get_supabase_sql_editor_url(supabase_url):
@@ -22,10 +22,11 @@ def get_supabase_sql_editor_url(supabase_url):
                 domain_parts = parts[1].split('.')
                 if len(domain_parts) > 0:
                     project_ref = domain_parts[0]
-                    return f"https://supabase.com/dashboard/project/{project_ref}/sql/new"
-        
+                    #return f"https://supabase.com/dashboard/project/{project_ref}/sql/new"
+                    return f"localhost:8000/project/default/sql"
+
         # Fallback to a generic URL
-        return "https://supabase.com/dashboard"
+        return "http://host.docker.internal:3001/project/default"
     except Exception:
         return "https://supabase.com/dashboard"
 
@@ -45,7 +46,7 @@ def show_manual_sql_instructions(sql, vector_dim, recreate=False):
     
     if recreate:
         st.markdown("**Step 3:** Copy and execute the following SQL:")
-        drop_sql = f"DROP FUNCTION IF EXISTS match_site_pages(vector({vector_dim}), int, jsonb);\nDROP TABLE IF EXISTS site_pages CASCADE;"
+        drop_sql = f"DROP FUNCTION IF EXISTS match_docs_site_pages(vector({vector_dim}), int, jsonb);\nDROP TABLE IF EXISTS docs_site_pages CASCADE;"
         st.code(drop_sql, language="sql")
         
         st.markdown("**Step 4:** Then copy and execute this SQL:")
@@ -97,15 +98,15 @@ def database_tab(supabase):
     
     try:
         # Try to query the table to see if it exists
-        response = supabase.table("site_pages").select("id").limit(1).execute()
+        response = supabase.table("docs_site_pages").select("id").limit(1).execute()
         table_exists = True
         
         # Check if the table has data
-        count_response = supabase.table("site_pages").select("*", count="exact").execute()
+        count_response = supabase.table("docs_site_pages").select("*", count="exact").execute()
         row_count = count_response.count if hasattr(count_response, 'count') else 0
         table_has_data = row_count > 0
         
-        st.success("✅ The site_pages table already exists in your database.")
+        st.success("✅ The docs_site_pages table already exists in your database.")
         if table_has_data:
             st.info(f"The table contains data ({row_count} rows).")
         else:
@@ -113,7 +114,7 @@ def database_tab(supabase):
     except Exception as e:
         error_str = str(e)
         if "relation" in error_str and "does not exist" in error_str:
-            st.info("The site_pages table does not exist yet. You can create it below.")
+            st.info("The docs_site_pages table does not exist yet. You can create it below.")
         else:
             st.error(f"Error checking table status: {error_str}")
             st.info("Proceeding with the assumption that the table needs to be created.")
@@ -134,10 +135,10 @@ def database_tab(supabase):
     sql_template = load_sql_template()
     
     # Replace the vector dimensions in the SQL
-    sql = sql_template.replace("vector(1536)", f"vector({vector_dim})")
+    sql = sql_template.replace("vector(768)", f"vector({vector_dim})")
     
-    # Also update the match_site_pages function dimensions
-    sql = sql.replace("query_embedding vector(1536)", f"query_embedding vector({vector_dim})")
+    # Also update the match_docs_site_pages function dimensions
+    sql = sql.replace("query_embedding vector(768)", f"query_embedding vector({vector_dim})")
     
     # Show the SQL
     with st.expander("View SQL", expanded=False):
@@ -163,13 +164,13 @@ def database_tab(supabase):
                     try:
                         with st.spinner("Clearing table data..."):
                             # Use the Supabase client to delete all rows
-                            response = supabase.table("site_pages").delete().neq("id", 0).execute()
+                            response = supabase.table("docs_site_pages").delete().neq("id", 0).execute()
                             st.success("✅ Table data cleared successfully!")
                             st.rerun()
                     except Exception as e:
                         st.error(f"Error clearing table data: {str(e)}")
                         # Fall back to manual SQL
-                        truncate_sql = "TRUNCATE TABLE site_pages;"
+                        truncate_sql = "TRUNCATE TABLE docs_site_pages;"
                         st.code(truncate_sql, language="sql")
                         st.info("Execute this SQL in your Supabase SQL Editor to clear the table data.")
                         

@@ -396,12 +396,13 @@ def get_clients():
         embedding_client = AsyncOpenAI(base_url=base_url, api_key=api_key)
 
     # Supabase client setup
-    supabase = None
+    
     supabase_url = get_env_var("SUPABASE_URL")
     supabase_key = get_env_var("SUPABASE_SERVICE_KEY")
-    if supabase_url and supabase_key:
+    supabase = create_client(get_env_var("SUPABASE_URL"), get_env_var("SUPABASE_SERVICE_KEY"))
+    if supabase:
         try:
-            supabase: Client = Client(supabase_url, supabase_key)
+            test_response = supabase.from_("site_pages").select("*").limit(1).execute()
         except Exception as e:
             print(f"Failed to initialize Supabase: {e}")
             write_to_log(f"Failed to initialize Supabase: {e}")

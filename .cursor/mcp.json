@@ -1,0 +1,72 @@
+{
+    "mcpServers": {
+
+      "filesystem": {
+        "command": "docker",
+        "args": [
+          "run",
+          "-i",
+          "--rm",
+          "--mount", "type=bind,src=/Users/username/Desktop,dst=/projects/Desktop",
+          "--mount", "type=bind,src=/path/to/other/allowed/dir,dst=/projects/other/allowed/dir,ro",
+          "--mount", "type=bind,src=/path/to/file.txt,dst=/projects/path/to/file.txt",
+          "mcp/filesystem",
+          "/projects"
+        ]
+      },
+
+      "brave-search": {
+        "command": "docker",
+        "args": [
+          "run",
+          "-i",
+          "--rm",
+          "-e",
+          "BRAVE_API_KEY",
+          "mcp/brave-search"
+        ],
+        "env": {
+          "BRAVE_API_KEY": "YOUR_API_KEY_HERE"
+        }
+      },
+
+      "git": {
+        "command": "docker",
+        "args": [
+          "run",
+          "--rm",
+          "-i",
+          "--mount", "type=bind,src=C:/Users/Owner/Documents/GitHub/MyAiStaffSwarm,dst=/repo",
+          "mcp/git",
+          "--repository",
+          "/repo"
+        ]
+      },
+      
+      "supabase": {
+        "command": "docker",
+        "args": ["run", "--rm", "-i", "-e", "SUPABASE_URL", "-e", "SUPABASE_SERVICE_KEY", "mcp/supabase"],
+        "env": {
+          "SUPABASE_URL": "http://localhost:8000",
+          "SUPABASE_SERVICE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoic2VydmljZV9yb2xlIiwiaXNzIjoic3VwYWJhc2UiLCJpYXQiOjE3MzczOTExMDAsImV4cCI6MjA1Mjc1MTEwMH0.Q5ZyhDUo6eMHN3sn27I01q-z-uHhSXf2XHRQzwjIpto"
+        }
+      },
+      
+      "perplexity-ask": {
+        "command": "docker",
+        "args": [
+          "run",
+          "-i",
+          "--rm",
+          "-e",
+          "PERPLEXITY_API_KEY",
+          "mcp/perplexity-ask"
+        ],
+        "env": {
+          "PERPLEXITY_API_KEY": "YOUR_API_KEY_HERE"
+        }
+      }
+    }
+  }
+
+
