@@ -137,7 +137,7 @@ def documentation_tab(supabase_client):
         st.subheader("Database Statistics")
         try:            
             # Query the count of Pydantic AI docs
-            result = supabase_client.table("site_pages").select("count", count="exact").eq("metadata->>source", "pydantic_ai_docs").execute()
+            result = supabase_client.table("docs_site_pages").select("count", count="exact").eq("metadata->>source", "pydantic_ai_docs").execute()
             count = result.count if hasattr(result, "count") else 0
             
             # Display the count
@@ -146,7 +146,7 @@ def documentation_tab(supabase_client):
             # Add a button to view the data
             if count > 0 and st.button("View Indexed Data", key="view_pydantic_data"):
                 # Query a sample of the data
-                sample_data = supabase_client.table("site_pages").select("url,title,summary,chunk_number").eq("metadata->>source", "pydantic_ai_docs").limit(10).execute()
+                sample_data = supabase_client.table("docs_site_pages").select("url,title,summary,chunk_number").eq("metadata->>source", "pydantic_ai_docs").limit(10).execute()
                 
                 # Display the sample data
                 st.dataframe(sample_data.data)

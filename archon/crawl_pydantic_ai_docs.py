@@ -217,7 +217,7 @@ async def get_embedding(text: str) -> List[float]:
         return response.data[0].embedding
     except Exception as e:
         print(f"Error getting embedding: {e}")
-        return [0] * 1536  # Return zero vector on error
+        return [0] * 768  # Return zero vector on error
 
 async def process_chunk(chunk: str, chunk_number: int, url: str) -> ProcessedChunk:
     """Process a single chunk of text."""
@@ -258,7 +258,7 @@ async def insert_chunk(chunk: ProcessedChunk):
             "embedding": chunk.embedding
         }
         
-        result = supabase.table("site_pages").insert(data).execute()
+        result = supabase.table("docs_site_pages").insert(data).execute()
         print(f"Inserted chunk {chunk.chunk_number} for {chunk.url}")
         return result
     except Exception as e:
@@ -421,10 +421,10 @@ def get_pydantic_ai_docs_urls() -> List[str]:
         return []
 
 def clear_existing_records():
-    """Clear all existing records with source='pydantic_ai_docs' from the site_pages table."""
+    """Clear all existing records with source='pydantic_ai_docs' from the docs_site_pages table."""
     try:
-        result = supabase.table("site_pages").delete().eq("metadata->>source", "pydantic_ai_docs").execute()
-        print("Cleared existing pydantic_ai_docs records from site_pages")
+        result = supabase.table("docs_site_pages").delete().eq("metadata->>source", "pydantic_ai_docs").execute()
+        print("Cleared existing pydantic_ai_docs records from docs_site_pages")
         return result
     except Exception as e:
         print(f"Error clearing existing records: {e}")

@@ -19,7 +19,7 @@ async def get_embedding(text: str, embedding_client: AsyncOpenAI) -> List[float]
         return response.data[0].embedding
     except Exception as e:
         print(f"Error getting embedding: {e}")
-        return [0] * 1536  # Return zero vector on error
+        return [0] * 768  # Return zero vector on error
 
 async def retrieve_relevant_documentation_tool(supabase: Client, embedding_client: AsyncOpenAI, user_query: str) -> str:
     try:
@@ -28,7 +28,7 @@ async def retrieve_relevant_documentation_tool(supabase: Client, embedding_clien
         
         # Query Supabase for relevant documents
         result = supabase.rpc(
-            'match_site_pages',
+            'match_docs_site_pages',
             {
                 'query_embedding': query_embedding,
                 'match_count': 4,
@@ -67,7 +67,7 @@ async def list_documentation_pages_tool(supabase: Client) -> List[str]:
     """
     try:
         # Query Supabase for unique URLs where source is pydantic_ai_docs
-        result = supabase.from_('site_pages') \
+        result = supabase.from_('docs_site_pages') \
             .select('url') \
             .eq('metadata->>source', 'pydantic_ai_docs') \
             .execute()
@@ -96,7 +96,7 @@ async def get_page_content_tool(supabase: Client, url: str) -> str:
     """
     try:
         # Query Supabase for all chunks of this URL, ordered by chunk_number
-        result = supabase.from_('site_pages') \
+        result = supabase.from_('docs_site_pages') \
             .select('title, content, chunk_number') \
             .eq('url', url) \
             .eq('metadata->>source', 'pydantic_ai_docs') \

@@ -59,7 +59,7 @@ def intro_tab():
         
         1. Go to the **Database** tab
         2. Select your embedding dimensions (1536 for OpenAI, 768 for nomic-embed-text)
-        3. Follow the instructions to create the `site_pages` table
+        3. Follow the instructions to create the `docs_site_pages` table
         
         This creates the necessary tables, indexes, and functions for vector similarity search.
         """)

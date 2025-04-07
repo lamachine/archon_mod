@@ -9,3 +9,5 @@ venv
 .env.temp
 .env.test
 env_vars.json
+
+utils/db_test.py

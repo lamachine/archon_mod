@@ -257,7 +257,7 @@ The flow works like this:
 ### Utilities
 - `utils/`: Utility functions and database setup
   - `utils.py`: Shared utility functions
-  - `site_pages.sql`: Database setup commands
+  - `docs_site_pages.sql`: Database setup commands
 
 ### Workbench
 - `workbench/`: Created at runtime, files specific to your environment
@@ -292,7 +292,7 @@ When running with Docker, the `run_docker.py` script automates building and star
 The Supabase database uses the following schema:
 
 ```sql
-CREATE TABLE site_pages (
+CREATE TABLE docs_site_pages (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     url TEXT,
     chunk_number INTEGER,
@@ -300,7 +300,7 @@ CREATE TABLE site_pages (
     summary TEXT,
     content TEXT,
     metadata JSONB,
-    embedding VECTOR(1536) -- Adjust dimensions as necessary (i.e. 768 for nomic-embed-text)
+    embedding VECTOR(768) -- Adjust dimensions as necessary (i.e. 768 for nomic-embed-text)
 );
 ```
 

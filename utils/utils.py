@@ -402,7 +402,7 @@ def get_clients():
     supabase = create_client(get_env_var("SUPABASE_URL"), get_env_var("SUPABASE_SERVICE_KEY"))
     if supabase:
         try:
-            test_response = supabase.from_("site_pages").select("*").limit(1).execute()
+            test_response = supabase.from_("docs_site_pages").select("*").limit(1).execute()
         except Exception as e:
             print(f"Failed to initialize Supabase: {e}")
             write_to_log(f"Failed to initialize Supabase: {e}")
